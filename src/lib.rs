@@ -21,11 +21,39 @@ pub struct Universe {
     cells: FixedBitSet,
 }
 
+impl Universe {
+    pub fn get_cells(&self) -> &FixedBitSet {
+        &self.cells
+    }
+
+    pub fn set_cells(&mut self, cells:&[(u32, u32)]) {
+        for (row, col) in cells.iter().cloned() {
+            let idx =self.get_index(row, col);
+            self.cells.set(idx, true);
+        }
+    }
+}
+
+
 #[wasm_bindgen]
 impl Universe {
     fn get_index(&self, row: u32, column: u32) -> usize {
         (row * self.width + column) as usize
     }
+
+    pub fn set_width(&mut self, width: u32) {
+        self.width = width;
+        let size = (self.width * self.height) as usize;
+        self.cells = FixedBitSet::with_capacity(size);
+    }
+
+
+    pub fn set_height(&mut self, height: u32) {
+        self.height = height;
+        let size = (self.width * self.height) as usize;
+        self.cells = FixedBitSet::with_capacity(size);
+    }
+
 
     pub fn cells(&self) -> *const u32 {
         self.cells.as_slice().as_ptr()
@@ -47,29 +75,8 @@ impl Universe {
         count
     }
      
-    fn add_spaceship(&self, cells: &mut FixedBitSet, xoff: u32, yoff: u32) -> FixedBitSet {
-    /* Ship starts as a 7x6 grid that looks like:
-     * _______
-     * __#__#_
-     * _#_____
-     * _#___#_
-     * _####__
-     * _______
-     *
-     */
-        let mut next = cells.clone();
-
-        let idx_start = self.get_index(xoff % self.width, yoff %self.height);
-        next.set(idx_start,true);
-        next.set(idx_start+1, true);
-        next.set(idx_start+2, true);
-        next
-
-    }
-
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
-        self.add_spaceship(&mut next, 40, 40);
 
         for row in 0..self.height {
             for col in 0..self.width {
@@ -89,14 +96,24 @@ impl Universe {
         self.cells = next;
     }
 
-    pub fn new() -> Universe {
+    pub fn new(is_random:bool) -> Universe {
         let width = 80;
         let height = 80;
         let size = (width * height) as usize;
         let mut cells = FixedBitSet::with_capacity(size);
 
-        for i in 0..size {
-            cells.set(i, js_sys::Math::random() < 0.5);
+        if is_random {
+            for i in 0..size {
+                cells.set(i, js_sys::Math::random() < 0.5);
+            }
+        } else {
+            for i in 0..size {
+                cells.set(i, false);
+            }
+            let i_start = (20 * width + 20) as usize; 
+            for i in i_start..i_start+7 {
+                cells.set(i, false);
+            }
         }
 
         Universe {
