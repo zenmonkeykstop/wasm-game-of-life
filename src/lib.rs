@@ -97,8 +97,8 @@ impl Universe {
     }
 
     pub fn new(is_random:bool) -> Universe {
-        let width = 80;
-        let height = 80;
+        let width = 73;
+        let height = 73;
         let size = (width * height) as usize;
         let mut cells = FixedBitSet::with_capacity(size);
 
@@ -107,12 +107,14 @@ impl Universe {
                 cells.set(i, js_sys::Math::random() < 0.5);
             }
         } else {
-            for i in 0..size {
-                cells.set(i, false);
-            }
-            let i_start = (20 * width + 20) as usize; 
-            for i in i_start..i_start+7 {
-                cells.set(i, false);
+            // add a lonely spaceship and a glider
+            let x_off = 40;
+            let y_off = 40;
+            let ship_defn  = [(0,1), (0,4), (1,0), (2,0), (2,4), (3,0), (3,1), (3,2), (3,3), (21,1), (22,2), (23,0), (23,1), (23,2)];
+            for (row, col) in ship_defn.iter().cloned() {
+                let idx = ((row + x_off) * width + (col + y_off)) as usize;
+                cells.set(idx % size, true);
+
             }
         }
 
