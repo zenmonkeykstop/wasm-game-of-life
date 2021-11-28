@@ -46,10 +46,30 @@ impl Universe {
         }
         count
     }
+     
+    fn add_spaceship(&self, cells: &mut FixedBitSet, xoff: u32, yoff: u32) -> FixedBitSet {
+    /* Ship starts as a 7x6 grid that looks like:
+     * _______
+     * __#__#_
+     * _#_____
+     * _#___#_
+     * _####__
+     * _______
+     *
+     */
+        let mut next = cells.clone();
+
+        let idx_start = self.get_index(xoff % self.width, yoff %self.height);
+        next.set(idx_start,true);
+        next.set(idx_start+1, true);
+        next.set(idx_start+2, true);
+        next
+
+    }
 
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
-
+        self.add_spaceship(&mut next, 40, 40);
 
         for row in 0..self.height {
             for col in 0..self.width {
