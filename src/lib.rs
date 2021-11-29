@@ -8,6 +8,14 @@ extern crate js_sys;
 extern crate fixedbitset;
 use fixedbitset::FixedBitSet;
 
+extern crate web_sys;
+
+macro_rules! log {
+    ( $( $t:tt )* ) => {
+        web_sys::console::log_1(&format!( $( $t )* ).into());
+    }
+}
+
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
@@ -97,8 +105,10 @@ impl Universe {
     }
 
     pub fn new(is_random:bool) -> Universe {
-        let width = 73;
-        let height = 73;
+        utils::set_panic_hook();
+        let width = 64;
+        let height = 64;
+        log!("The universe is {} by {} cells...", width, height);
         let size = (width * height) as usize;
         let mut cells = FixedBitSet::with_capacity(size);
 
@@ -110,7 +120,7 @@ impl Universe {
             // add a lonely spaceship and a glider
             let x_off = 40;
             let y_off = 40;
-            let ship_defn  = [(0,1), (0,4), (1,0), (2,0), (2,4), (3,0), (3,1), (3,2), (3,3), (21,1), (22,2), (23,0), (23,1), (23,2)];
+            let ship_defn  = [(0,1), (0,4), (1,0), (2,0), (2,4), (3,0), (3,1), (3,2), (3,3), (11,1), (12,2), (13,0), (13,1), (13,2), (31,1), (32,2), (33,0), (33,1), (33,2)];
             for (row, col) in ship_defn.iter().cloned() {
                 let idx = ((row + x_off) * width + (col + y_off)) as usize;
                 cells.set(idx % size, true);
