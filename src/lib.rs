@@ -30,6 +30,7 @@ pub struct Universe {
 }
 
 impl Universe {
+
     pub fn get_cells(&self) -> &FixedBitSet {
         &self.cells
     }
@@ -42,9 +43,37 @@ impl Universe {
     }
 }
 
-
 #[wasm_bindgen]
 impl Universe {
+
+    pub fn toggle_cell(&mut self, row: u32, col: u32) {
+        let idx = self.get_index(row, col);
+        self.cells.set(idx, !self.cells[idx]);
+    }
+
+    pub fn randomize(&mut self) {
+        let size = (self.width * self.height) as usize;
+        for i in 0..size {
+            self.cells.set(i, js_sys::Math::random() < 0.5);
+        }
+    }
+
+    pub fn clear(&mut self) {
+        let size = (self.width * self.height) as usize;
+        for i in 0..size {
+            self.cells.set(i, false);
+        }
+    }
+
+
+    pub fn width(&self) -> u32 {
+        self.width
+    }
+
+    pub fn height(&self) -> u32 {
+        self.height
+    }
+
     fn get_index(&self, row: u32, column: u32) -> usize {
         (row * self.width + column) as usize
     }
@@ -104,27 +133,20 @@ impl Universe {
         self.cells = next;
     }
 
-    pub fn new(is_random:bool) -> Universe {
+    pub fn new() -> Universe {
         utils::set_panic_hook();
         let width = 64;
         let height = 64;
         log!("The universe is {} by {} cells...", width, height);
         let size = (width * height) as usize;
         let mut cells = FixedBitSet::with_capacity(size);
-        if is_random {
-            for i in 0..size {
-                cells.set(i, js_sys::Math::random() < 0.5);
-            }
-        } else {
-            // add a lonely spaceship and a glider
-            let x_off = 40;
-            let y_off = 40;
-            let ship_defn  = [(0,1), (0,4), (1,0), (2,0), (2,4), (3,0), (3,1), (3,2), (3,3), (11,1), (12,2), (13,0), (13,1), (13,2), (31,1), (32,2), (33,0), (33,1), (33,2)];
-            for (row, col) in ship_defn.iter().cloned() {
-                let idx = ((row + x_off) * width + (col + y_off)) as usize;
-                cells.set(idx % size, true);
-
-            }
+        // add a lonely spaceship and some gliders
+        let x_off = 40;
+        let y_off = 40;
+        let ship_defn  = [(0,1), (0,4), (1,0), (2,0), (2,4), (3,0), (3,1), (3,2), (3,3), (11,1), (12,2), (13,0), (13,1), (13,2), (31,1), (32,2), (33,0), (33,1), (33,2)];
+        for (row, col) in ship_defn.iter().cloned() {
+            let idx = ((row + x_off) * width + (col + y_off)) as usize;
+            cells.set(idx % size, true);
         }
 
         Universe {
