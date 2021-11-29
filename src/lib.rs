@@ -111,7 +111,6 @@ impl Universe {
         log!("The universe is {} by {} cells...", width, height);
         let size = (width * height) as usize;
         let mut cells = FixedBitSet::with_capacity(size);
-
         if is_random {
             for i in 0..size {
                 cells.set(i, js_sys::Math::random() < 0.5);
