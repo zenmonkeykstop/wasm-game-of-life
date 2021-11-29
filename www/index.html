@@ -12,13 +12,19 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    line-height: 45%;
     background: #202020;
+
   }
 
   .ctrl {
       height: 1.5em;
       background-color: #808080;
+  }
+
+  #fps {
+  white-space: pre;
+  color: white;
+  font-family: monospace;
   }
     </style>
     <meta charset="utf-8">
@@ -30,6 +36,7 @@
       <button class="ctrl" id="random">RND</button>
       <button class="ctrl" id="clear">CLR</button></span>
     <canvas id="game-of-life-canvas"></canvas>
+    <div id="fps"></div>
     <script src="./bootstrap.js"></script>
   </body>
 </html>
