@@ -122,6 +122,7 @@ canvas.addEventListener("click", event => {
 const playPauseButton = document.getElementById("play-pause");
 const randomButton = document.getElementById("random");
 const clearButton = document.getElementById("clear");
+const stepButton = document.getElementById("step");
 
 const play = () => {
   playPauseButton.textContent = "⏸";
@@ -150,6 +151,13 @@ randomButton.addEventListener("click", event => {
 
 clearButton.addEventListener("click", event => {
     universe.clear();
+    drawGrid();
+    drawCells();
+});
+
+stepButton.addEventListener("click", event => {
+    pause();
+    universe.tick();
     drawGrid();
     drawCells();
 });
