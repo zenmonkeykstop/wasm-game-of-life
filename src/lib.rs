@@ -69,7 +69,9 @@ impl Universe {
         let size = (self.width * self.height) as usize;
         let glider_defn  = [(0,1), (1,2), (2,0), (2,1), (2,2)];
         for (x, y) in glider_defn.iter().cloned() {
-            let idx = ((x + row - 1) * self.width + (y + col -1)) as usize;
+            let adjusted_x = (x - 1 + row) % self.height;
+            let adjusted_y = (y - 1 + col) % self.width;
+            let idx = self.get_index(adjusted_x, adjusted_y);
             self.cells.set(idx % size, true);
         }
     }
@@ -89,7 +91,9 @@ impl Universe {
             (12,2), (12,3), (12,4), (12,8), (12,9), (12,10),
             ];
         for (x, y) in pulsar_defn.iter().cloned() {
-            let idx = ((x + row - 6) * self.width + (y + col -6)) as usize;
+            let adjusted_x = (x - 6 + row) % self.height;
+            let adjusted_y = (y - 6 + col) % self.width;
+            let idx = self.get_index(adjusted_x, adjusted_y);
             self.cells.set(idx % size, true);
         }
     }
@@ -103,7 +107,7 @@ impl Universe {
     }
 
     fn get_index(&self, row: u32, column: u32) -> usize {
-        (row * self.width + column) as usize
+        ((row  * self.width) + column ) as usize
     }
 
     pub fn set_width(&mut self, width: u32) {
