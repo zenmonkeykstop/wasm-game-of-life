@@ -67,7 +67,9 @@ impl Universe {
 
     pub fn add_glider(&mut self, row: u32, col: u32) {
         let size = (self.width * self.height) as usize;
-        let glider_defn  = [(0,1), (1,2), (2,0), (2,1), (2,2)];
+        let glider_defn  = [(0,1), 
+                                   (1,2),
+                     (2,0), (2,1), (2,2)];
         for (x, y) in glider_defn.iter().cloned() {
             let adjusted_x = (x - 1 + row) % self.height;
             let adjusted_y = (y - 1 + col) % self.width;
